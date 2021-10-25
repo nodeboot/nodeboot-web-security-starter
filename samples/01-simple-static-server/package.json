@@ -1,0 +1,16 @@
+{
+  "name": "simple-static-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodeboot-web-security-starter": "jrichardsz-software-architect-tools/nodeboot-web-security-starter#main"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "nodeboot-web-security-starter",
+  "version": "1.0.0",
+  "description": "Simple npm package to add a simple login feature to any express web application (not api or microservice)",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose --silent=true --collectCoverage --detectOpenHandles",
+    "testVerbose": "jest --verbose --silent=false --collectCoverage --detectOpenHandles"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jrichardsz-software-architect-tools/nodeboot-web-security-starter.git"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express-session": "^1.17.2",
+    "html-escaper": "^3.0.3",
+    "passport": "^0.5.0",
+    "passport-microsoft": "^0.1.0",
+    "uuid": "^8.3.2"
+  },
+  "keywords": [
+    "auto-login-js"
+  ],
+  "author": "JRichardsz <jrichardsz.java@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "#"
+  },
+  "homepage": "#",
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "express": "^4.17.1",
+    "find-package-json": "^1.2.0",
+    "jest": "^27.2.1",
+    "supertest": "^6.1.6"
+  }
+}
