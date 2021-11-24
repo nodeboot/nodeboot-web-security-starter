@@ -128,13 +128,13 @@ function MicrosoftLoginProvider(options) {
     }
 
     //search without domain
-    let storedUser = this.userMemoryProvider.findUserForOauth2Login(sessionEmailFromOauth2Provider.split("@")[0].trim());
+    let existUser = this.userMemoryProvider.isUserAllowedForOauth2Login(sessionEmailFromOauth2Provider.trim());
 
-    if (typeof storedUser === 'undefined' || storedUser.mail !== sessionEmailFromOauth2Provider) {
+    if (typeof existUser === 'undefined' || existUser === false) {
       return res.status(403).send(`You are not allowed to access this page : 403100. Click <a href="${this.options.signinRoute}">here</a> to login`);
     } else {
       //user exist on microsoft and on memory store !!
-      req.session['auth_user'] = storedUser;
+      req.session['auth_user'] = existUser;
       res.redirect("/");
     }
   };

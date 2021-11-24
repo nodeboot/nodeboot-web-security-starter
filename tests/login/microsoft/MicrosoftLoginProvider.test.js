@@ -208,7 +208,7 @@ describe('MicrosoftLoginProvider.js', () => {
     expect(callbackResponse.text.startsWith("You are not allowed to access this page : 403100")).toBe(true);
   })
   it('valid mail/user on callback with env user: should access', async () => {
-    process.env['USER_jane'] = "jane@microsoft.com";
+    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
     const app = express();
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
@@ -245,7 +245,7 @@ describe('MicrosoftLoginProvider.js', () => {
 
   it('valid mail/user on callback with env user and pre-existent session: should access', async () => {
 
-    process.env['USER_jane'] = "jane@microsoft.com";
+    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
     const app = express();
     app.use(session({
       secret: "secret",
@@ -289,7 +289,7 @@ describe('MicrosoftLoginProvider.js', () => {
   })
 
   it('authenticated user, after logout : should show a logout message', async () => {
-    process.env['USER_jane'] = "jane@microsoft.com";
+    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
     const app = express();
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
@@ -349,7 +349,7 @@ describe('MicrosoftLoginProvider.js', () => {
     expect(response.headers.location.startsWith("https://login.microsoftonline.com/common/oauth2/v2.0/authorize")).toBe(true);
   })
   it('custom callback : should work', async () => {
-    process.env['USER_jane'] = "jane@microsoft.com";
+    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
     const app = express();
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
@@ -384,7 +384,7 @@ describe('MicrosoftLoginProvider.js', () => {
     expect(response.text).toBe('im the protected');
   })
   it('custom logout : should work', async () => {
-    process.env['USER_jane'] = "jane@microsoft.com";
+    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
     const app = express();
     var loginProvider = new MicrosoftLoginProvider({
       express: app,

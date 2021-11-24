@@ -58,7 +58,13 @@ var loginProvider = new LoginProvider({
 
 ## Microsoft Login
 
-First, obtain a client id and secret creating an [application](https://apps.dev.microsoft.com/#/appList) on microsoft following this [guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+As we know, microsoft uses oauth2 protocol for its login. Being more specific, microsfot uses the Authorization Grant Flow (oauth2). For this, the following parameters are required:
+
+- base url: http://localhost:8080
+- callback url: http://localhost:8080/microsoft/auth/callback
+- logout ur: http://localhost:8080/logout
+
+Then to obtain a **client id and secret** you should create an [application](https://apps.dev.microsoft.com/#/appList) on microsoft following this [guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app). Microsoft and other clouds, will ask you for previous listed parameters (base url, callback and logout)
 
 After that change a little bit your configuration:
 
@@ -76,11 +82,12 @@ var loginProvider = new MicrosoftLoginProvider({
 defaultLoginProvider.configure();
 ```
 
+> Note: In the azure console,
+
 And these variables:
 
 ```
-export USER_jane=jane@hotmail.com
-export USER_kurt=kurt@outlook.com
+export AUTH_allowedUsers="jane@hotmail.com , kurt@outlook.com"
 ```
 
 That's all. In the next restart, your web will be protected with microsoft login and just jane@hotmail.com or kurt@outlook.com could access.

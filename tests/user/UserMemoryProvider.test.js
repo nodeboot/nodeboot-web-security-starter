@@ -21,13 +21,11 @@ describe('user/UserMemoryProvider.js \tfindUser()', function() {
     var kurt = userMemoryProvider.findUserForDefaultLogin("kurt");
     expect("secret").to.equal(kurt.password);
   });
-  it('findUserForOauth2Login: simpe user = pssword', function() {
-    process.env['USER_jane'] = "jane@mail.com";
-    process.env['USER_kurt'] = "kurt@blindspot.com";
+  it('isUserAllowedForOauth2Login: allowedUsers', function() {
+    process.env['AUTH_allowedUsers'] = "jane@mail.com, kurt@blindspot.com";
     var userMemoryProvider = new UserMemoryProvider();
-    var jane = userMemoryProvider.findUserForOauth2Login("jane");
-    expect("jane@mail.com").to.equal(jane.mail);
-    var kurt = userMemoryProvider.findUserForOauth2Login("kurt");
-    expect("kurt@blindspot.com").to.equal(kurt.mail);
+    expect(userMemoryProvider.isUserAllowedForOauth2Login("cooper@mail.com")).to.equal(false);
+    expect(userMemoryProvider.isUserAllowedForOauth2Login("jane@mail.com")).to.equal(true);
+    expect(userMemoryProvider.isUserAllowedForOauth2Login("kurt@blindspot.com")).to.equal(true);
   });
 });

@@ -21,14 +21,11 @@ function UserMemoryProvider() {
   this.usersOauth2Login;
   this.loadUsersAsKeyFromMemoryForOauth2Login = () => {
     var configUsers = {
-      "outputType":"object",
-      "splitChar":",",
-      "indexNames":{
-        "0":"mail"
-      }
+      "outputType":"array",
+      "splitChar":","
     };
 
-    this.usersOauth2Login = this.environmentHelper.findByPrefix("USER_", configUsers);
+    this.usersOauth2Login = this.environmentHelper.findByPrefix("AUTH_", configUsers);
   };
 
   this.findUserForDefaultLogin = (username) => {
@@ -38,11 +35,16 @@ function UserMemoryProvider() {
     return this.usersDefaultLogin[username];
   };
 
-  this.findUserForOauth2Login = (username) => {
+  this.isUserAllowedForOauth2Login = (email) => {
     if(typeof this.usersOauth2Login === 'undefined'){
       this.loadUsersAsKeyFromMemoryForOauth2Login();
     }
-    return this.usersOauth2Login[username];
+
+    if(typeof this.usersOauth2Login.allowedUsers === 'undefined'){
+      return false;
+    }
+
+    return this.usersOauth2Login.allowedUsers.includes(email);
   };
 }
 
