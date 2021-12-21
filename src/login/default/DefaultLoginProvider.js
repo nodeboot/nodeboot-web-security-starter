@@ -9,7 +9,7 @@ const UserMemoryProvider = require('../../user/UserMemoryProvider.js');
 function DefaultLoginProvider(options){
 
   this.options = options;
-  this.userMemoryProvider = new UserMemoryProvider();
+  this.userMemoryProvider = new UserMemoryProvider(this.options.usersDataSource);
   this.allowedThemes = ['material','minimal'];
 
   this.configure = () => {
@@ -74,6 +74,7 @@ function DefaultLoginProvider(options){
 
   var showSigninFormRoute = (req, res, next) => {
     var login_message = req.session['login.message'] || "";
+    console.log("message to show on login: "+login_message);
     if(typeof this.defaultSigninHtml === 'undefined'){
       fs.readFile(this.signinHtmlPath, 'utf8' , (err, html) => {
         //err never will be null because if theme is unknown, a default is set
@@ -94,6 +95,7 @@ function DefaultLoginProvider(options){
   var performSigninRoute = (req, res, next) => {
 
     if (typeof req.body.username === 'undefined' || typeof req.body.password === 'undefined') {
+      console.log("User or password incorrect: "+req.body.username);
       req.session['login.message'] = "User or password incorrect";
       return res.redirect(this.options.signinRoute);
     }
@@ -101,6 +103,7 @@ function DefaultLoginProvider(options){
     let storedUser = this.userMemoryProvider.findUserForDefaultLogin(req.body.username);
 
     if (typeof storedUser === 'undefined' || req.body.password !== storedUser.password) {
+      console.log("user don't exist on env or password is incorrect");
       req.session['login.message'] = "User or password incorrect";
       return res.redirect(this.options.signinRoute);
     }else {

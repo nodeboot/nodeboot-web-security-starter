@@ -6,6 +6,9 @@ const DefaultLoginProvider = require('nodeboot-web-security-starter').DefaultLog
 
 var defaultLoginProvider = new DefaultLoginProvider({
   express: app,
+  usersDataSource: {
+    envKey : "USER_"
+  },
   title: "Acme",
   signinHtmlTheme : "material"
 });
