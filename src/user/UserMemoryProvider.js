@@ -1,7 +1,8 @@
 const EnvironmentHelper = require("../common/EnvironmentHelper.js");
 
-function UserMemoryProvider() {
+function UserMemoryProvider(userDatasourceOptions) {
 
+  this.options = userDatasourceOptions;
   this.environmentHelper = new EnvironmentHelper();
 
   this.usersDefaultLogin;
@@ -15,17 +16,18 @@ function UserMemoryProvider() {
       }
     };
 
-    this.usersDefaultLogin = this.environmentHelper.findByPrefix("USER_", configUsers);
+    this.usersDefaultLogin = this.environmentHelper.findByPrefix(this.options.envKey, configUsers);
   };
 
-  this.usersOauth2Login;
-  this.loadUsersAsKeyFromMemoryForOauth2Login = () => {
-    var configUsers = {
-      "outputType":"array",
-      "splitChar":","
-    };
-
-    this.usersOauth2Login = this.environmentHelper.findByPrefix("AUTH_", configUsers);
+  this.oauth2AllowedUsers;
+  this.loadUsersFromMemoryForOauth2Login = () => {
+    try{      
+      this.oauth2AllowedUsers = process.env[this.options.envKey].replace(/ /g,'').split(",");
+    }catch(err){
+      console.log("Error while user are extracting from environment variable:"+this.options.envKey);
+      console.log(err);
+      this.oauth2AllowedUsers = [];
+    }
   };
 
   this.findUserForDefaultLogin = (username) => {
@@ -36,15 +38,11 @@ function UserMemoryProvider() {
   };
 
   this.isUserAllowedForOauth2Login = (email) => {
-    if(typeof this.usersOauth2Login === 'undefined'){
-      this.loadUsersAsKeyFromMemoryForOauth2Login();
+    if(typeof this.oauth2AllowedUsers === 'undefined'){
+      this.loadUsersFromMemoryForOauth2Login();
     }
 
-    if(typeof this.usersOauth2Login.allowedUsers === 'undefined'){
-      return false;
-    }
-
-    return this.usersOauth2Login.allowedUsers.includes(email);
+    return this.oauth2AllowedUsers.includes(email);
   };
 }
 

@@ -48,7 +48,10 @@ describe('DefaultLoginProvider.js', () => {
     it('good session, missing env : user cannot signin', async () => {
         const app = express();
         var defaultLoginProvider = new DefaultLoginProvider({
-          express: app
+          express: app,
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         defaultLoginProvider.configure();
 
@@ -67,7 +70,10 @@ describe('DefaultLoginProvider.js', () => {
         const app = express();
         process.env['USER_jane'] = "changeme";
         var defaultLoginProvider = new DefaultLoginProvider({
-          express: app
+          express: app,
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         defaultLoginProvider.configure();
 
@@ -96,9 +102,12 @@ describe('DefaultLoginProvider.js', () => {
     })
     it('missing environment users : should see an error message', async () => {
         const app = express();
-
+        process.env['USER_jane'] = null;
         var defaultLoginProvider = new DefaultLoginProvider({
-          express: app
+          express: app,
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         defaultLoginProvider.configure();
 
@@ -106,7 +115,8 @@ describe('DefaultLoginProvider.js', () => {
         server.listen(0);
         var signinResp = await request(app)
           .post('/signin')
-          .send({ username: 'noenv', password: 'changeme' });
+          .send({ username: 'jane', password: 'changeme' });
+          console.log(signinResp.text);
         expect(signinResp.status).toBe(302);
         expect(signinResp.headers.location).toBe("/signin");
         //TODO: validate error message on login
@@ -116,7 +126,10 @@ describe('DefaultLoginProvider.js', () => {
         const app = express();
         process.env['USER_jane'] = "changeme";
         var defaultLoginProvider = new DefaultLoginProvider({
-          express: app
+          express: app,
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         defaultLoginProvider.configure();
 
@@ -134,7 +147,10 @@ describe('DefaultLoginProvider.js', () => {
         const app = express();
         process.env['USER_jane'] = "changeme";
         var defaultLoginProvider = new DefaultLoginProvider({
-          express: app
+          express: app,
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         defaultLoginProvider.configure();
 
@@ -160,7 +176,10 @@ describe('DefaultLoginProvider.js', () => {
         const app = express();
         process.env['USER_jane'] = "changeme";
         var defaultLoginProvider = new DefaultLoginProvider({
-          express: app
+          express: app,
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         app.use(session({
           secret: "secret",
@@ -195,7 +214,10 @@ describe('DefaultLoginProvider.js', () => {
         const app = express();
         process.env['USER_jane'] = "changeme";
         var defaultLoginProvider = new DefaultLoginProvider({
-          express: app
+          express: app,
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         defaultLoginProvider.configure();
 
@@ -262,7 +284,10 @@ describe('DefaultLoginProvider.js', () => {
       const app = express();
       var defaultLoginProvider = new DefaultLoginProvider({
         express: app,
-        signinHtmlTheme: "material"
+        signinHtmlTheme: "material",
+        usersDataSource: {
+          envKey : "USER_"
+        }
       });
       defaultLoginProvider.configure();
       server = http.createServer(app);
@@ -276,7 +301,10 @@ describe('DefaultLoginProvider.js', () => {
       const app = express();
       var defaultLoginProvider = new DefaultLoginProvider({
         express: app,
-        signinHtmlPath: path.join(__dirname, "signinHtmlPath.html")
+        signinHtmlPath: path.join(__dirname, "signinHtmlPath.html"),
+        usersDataSource: {
+          envKey : "USER_"
+        }
       });
       defaultLoginProvider.configure();
       server = http.createServer(app);
@@ -296,7 +324,10 @@ describe('DefaultLoginProvider.js', () => {
       const app = express();
       var defaultLoginProvider = new DefaultLoginProvider({
         express: app,
-        signinRoute: "/foo"
+        signinRoute: "/foo",
+        usersDataSource: {
+          envKey : "USER_"
+        }
       });
       defaultLoginProvider.configure();
       server = http.createServer(app);
@@ -310,7 +341,10 @@ describe('DefaultLoginProvider.js', () => {
       const app = express();
       var defaultLoginProvider = new DefaultLoginProvider({
         express: app,
-        title: "123456789"
+        title: "123456789",
+        usersDataSource: {
+          envKey : "USER_"
+        }
       });
       defaultLoginProvider.configure();
       server = http.createServer(app);
@@ -325,7 +359,10 @@ describe('DefaultLoginProvider.js', () => {
         process.env['USER_jane'] = "changeme";
         var defaultLoginProvider = new DefaultLoginProvider({
           express: app,
-          signinActionRoute: "/bar"
+          signinActionRoute: "/bar",
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         defaultLoginProvider.configure();
         server = http.createServer(app);
@@ -346,7 +383,10 @@ describe('DefaultLoginProvider.js', () => {
         process.env['USER_jane'] = "changeme";
         var defaultLoginProvider = new DefaultLoginProvider({
           express: app,
-          logoutRoute : "/foo"
+          logoutRoute : "/foo",
+          usersDataSource: {
+            envKey : "USER_"
+          }
         });
         defaultLoginProvider.configure();
 

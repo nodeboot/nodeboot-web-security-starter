@@ -156,7 +156,7 @@ describe('MicrosoftLoginProvider.js', () => {
     server = http.createServer(app);
     server.listen(0);
 
-    var req = request(app).get('/microsoft/auth/callback');
+    var req = request(app).get('/microsoft/oauth2/callback');
     const callbackResponse = await req;
     expect(callbackResponse.status).toBe(401);
     expect(callbackResponse.text.startsWith("You are not allowed to access this page : 401500")).toBe(true);
@@ -179,7 +179,7 @@ describe('MicrosoftLoginProvider.js', () => {
     server = http.createServer(app);
     server.listen(0);
 
-    var req = request(app).get('/microsoft/auth/callback');
+    var req = request(app).get('/microsoft/oauth2/callback');
     const callbackResponse = await req;
     expect(callbackResponse.status).toBe(401);
     expect(callbackResponse.text.startsWith("You are not allowed to access this page : 401501")).toBe(true);
@@ -190,6 +190,9 @@ describe('MicrosoftLoginProvider.js', () => {
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
       baseUrl: "localhost:3000",
+      usersDataSource: {
+        envKey : "SELF_SERVICE_DOCS_ALLOWED_USERS"
+      },
       microsoft: {
         clientId: "foo",
         clientSecret: "bar"
@@ -202,17 +205,21 @@ describe('MicrosoftLoginProvider.js', () => {
     server = http.createServer(app);
     server.listen(0);
 
-    var req = request(app).get('/microsoft/auth/callback');
+    var req = request(app).get('/microsoft/oauth2/callback');
     const callbackResponse = await req;
+    console.log(callbackResponse.text);
     expect(callbackResponse.status).toBe(403);
     expect(callbackResponse.text.startsWith("You are not allowed to access this page : 403100")).toBe(true);
   })
   it('valid mail/user on callback with env user: should access', async () => {
-    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
+    process.env['SELF_SERVICE_DOCS_ALLOWED_USERS'] = "jane@microsoft.com";
     const app = express();
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
       baseUrl: "localhost:3000",
+      usersDataSource: {
+        envKey : "SELF_SERVICE_DOCS_ALLOWED_USERS"
+      },
       microsoft: {
         clientId: "foo",
         clientSecret: "bar"
@@ -227,7 +234,7 @@ describe('MicrosoftLoginProvider.js', () => {
     server = http.createServer(app);
     server.listen(0);
 
-    var req = request(app).get('/microsoft/auth/callback');
+    var req = request(app).get('/microsoft/oauth2/callback');
     const callbackResponse = await req;
     expect(callbackResponse.status).toBe(302);
     expect(callbackResponse.headers.location).toBe("/");
@@ -245,7 +252,7 @@ describe('MicrosoftLoginProvider.js', () => {
 
   it('valid mail/user on callback with env user and pre-existent session: should access', async () => {
 
-    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
+    process.env['SELF_SERVICE_DOCS_ALLOWED_USERS'] = "jane@microsoft.com";
     const app = express();
     app.use(session({
       secret: "secret",
@@ -259,6 +266,9 @@ describe('MicrosoftLoginProvider.js', () => {
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
       baseUrl: "localhost:3000",
+      usersDataSource: {
+        envKey : "SELF_SERVICE_DOCS_ALLOWED_USERS"
+      },
       microsoft: {
         clientId: "foo",
         clientSecret: "bar"
@@ -273,7 +283,7 @@ describe('MicrosoftLoginProvider.js', () => {
     server = http.createServer(app);
     server.listen(0);
 
-    var req = request(app).get('/microsoft/auth/callback');
+    var req = request(app).get('/microsoft/oauth2/callback');
     const callbackResponse = await req;
     expect(callbackResponse.status).toBe(302);
     expect(callbackResponse.headers.location).toBe("/");
@@ -289,11 +299,14 @@ describe('MicrosoftLoginProvider.js', () => {
   })
 
   it('authenticated user, after logout : should show a logout message', async () => {
-    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
+    process.env['SELF_SERVICE_DOCS_ALLOWED_USERS'] = "jane@microsoft.com";
     const app = express();
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
       baseUrl: "localhost:3000",
+      usersDataSource: {
+        envKey : "SELF_SERVICE_DOCS_ALLOWED_USERS"
+      },
       microsoft: {
         clientId: "foo",
         clientSecret: "bar"
@@ -308,7 +321,7 @@ describe('MicrosoftLoginProvider.js', () => {
     server = http.createServer(app);
     server.listen(0);
 
-    var req = request(app).get('/microsoft/auth/callback');
+    var req = request(app).get('/microsoft/oauth2/callback');
     const callbackResponse = await req;
     expect(callbackResponse.status).toBe(302);
     expect(callbackResponse.headers.location).toBe("/");
@@ -335,6 +348,9 @@ describe('MicrosoftLoginProvider.js', () => {
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
       baseUrl: "localhost:3000",
+      usersDataSource: {
+        envKey : "SELF_SERVICE_DOCS_ALLOWED_USERS"
+      },
       signinRoute: "/foo",
       microsoft: {
         clientId: "foo",
@@ -349,11 +365,14 @@ describe('MicrosoftLoginProvider.js', () => {
     expect(response.headers.location.startsWith("https://login.microsoftonline.com/common/oauth2/v2.0/authorize")).toBe(true);
   })
   it('custom callback : should work', async () => {
-    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
+    process.env['SELF_SERVICE_DOCS_ALLOWED_USERS'] = "jane@microsoft.com";
     const app = express();
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
       baseUrl: "localhost:3000",
+      usersDataSource: {
+        envKey : "SELF_SERVICE_DOCS_ALLOWED_USERS"
+      },
       callbackRoute: "/bar",
       microsoft: {
         clientId: "foo",
@@ -384,11 +403,14 @@ describe('MicrosoftLoginProvider.js', () => {
     expect(response.text).toBe('im the protected');
   })
   it('custom logout : should work', async () => {
-    process.env['AUTH_allowedUsers'] = "jane@microsoft.com";
+    process.env['SELF_SERVICE_DOCS_ALLOWED_USERS'] = "jane@microsoft.com";
     const app = express();
     var loginProvider = new MicrosoftLoginProvider({
       express: app,
       baseUrl: "localhost:3000",
+      usersDataSource: {
+        envKey : "SELF_SERVICE_DOCS_ALLOWED_USERS"
+      },
       logoutRoute: "/baz",
       microsoft: {
         clientId: "foo",
@@ -404,7 +426,7 @@ describe('MicrosoftLoginProvider.js', () => {
     server = http.createServer(app);
     server.listen(0);
 
-    var req = request(app).get('/microsoft/auth/callback');
+    var req = request(app).get('/microsoft/oauth2/callback');
     const callbackResponse = await req;
     expect(callbackResponse.status).toBe(302);
     expect(callbackResponse.headers.location).toBe("/");

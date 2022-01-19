@@ -9,14 +9,14 @@ const passport = require('passport');
 
 function MicrosoftLoginProvider(options) {
 
-  this.MicrosoftStrategy = require('passport-microsoft').Strategy;
   this.options = options;
-  this.userMemoryProvider = new UserMemoryProvider();
+  this.MicrosoftStrategy = require('passport-microsoft').Strategy;
+  this.userMemoryProvider = new UserMemoryProvider(this.options.usersDataSource);
 
   this.configure = () => {
 
     this.options.signinRoute = (typeof this.options.signinRoute === 'undefined' ? "/signin" : html.escape(this.options.signinRoute));
-    this.options.callbackRoute = (typeof this.options.callbackRoute === 'undefined' ? "/microsoft/auth/callback" : html.escape(this.options.callbackRoute));
+    this.options.callbackRoute = (typeof this.options.callbackRoute === 'undefined' ? "/microsoft/oauth2/callback" : html.escape(this.options.callbackRoute));
     this.options.logoutRoute = (typeof this.options.logoutRoute === 'undefined' ? "/logout" : html.escape(this.options.logoutRoute));
 
     if (typeof this.options.baseUrl === 'undefined') {
