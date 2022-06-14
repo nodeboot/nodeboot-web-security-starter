@@ -21,7 +21,8 @@ function UserMemoryProvider(userDatasourceOptions) {
 
   this.oauth2AllowedUsers;
   this.loadUsersFromMemoryForOauth2Login = () => {
-    try{      
+    console.log(process.env["test_id"]);
+    try{
       this.oauth2AllowedUsers = process.env[this.options.envKey].replace(/ /g,'').split(",");
     }catch(err){
       console.log("Error while user are extracting from environment variable:"+this.options.envKey);

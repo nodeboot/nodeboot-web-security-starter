@@ -2,6 +2,7 @@ const fs = require('fs');
 const html = require('html-escaper');
 const path = require('path');
 const bodyParser = require('body-parser');
+const url = require('url');
 const SessionHelper = require('../../common/SessionHelper.js');
 const uuid = require('uuid');
 const UserMemoryProvider = require('../../user/UserMemoryProvider.js');
@@ -19,6 +20,7 @@ function DefaultLoginProvider(options){
     this.options.logoutRoute = (typeof this.options.logoutRoute === 'undefined' ? "/logout" : html.escape(this.options.logoutRoute));
 
     this.options.title = (typeof this.options.title === 'undefined' ? "" : html.escape(this.options.title));
+    this.options.publicRoutes = (typeof this.options.publicRoutes === 'undefined' ? [] : this.options.publicRoutes);
 
     if(typeof this.options.signinHtmlPath !== 'undefined'){
       this.signinHtmlPath = path.normalize(this.options.signinHtmlPath);
@@ -52,8 +54,9 @@ function DefaultLoginProvider(options){
 
   var ensureAuthenticationMiddleware = () => {
     return (req, res, next) => {
+
       if(req.url.startsWith(this.options.signinRoute) || req.url.startsWith(this.options.signinActionRoute)
-        || req.url.startsWith(this.options.logoutRoute)){
+        || req.url.startsWith(this.options.logoutRoute) || this.options.publicRoutes.includes(url.parse(req.url).pathname)){
         return next();
       }
       //TODO: jest coverage warn this line
@@ -68,13 +71,16 @@ function DefaultLoginProvider(options){
         return res.send(`You are not allowed to access this page. Click <a href="${this.options.signinRoute}">here</a> to login`);
       }
       //is not a login request (endpoint or asset) and exist a valid session
+      if(typeof this.options.beforerStaticResponse !=='undefined'){
+        this.options.beforerStaticResponse(req, res, next);
+      }
       next();
     }
   }
 
   var showSigninFormRoute = (req, res, next) => {
     var login_message = req.session['login.message'] || "";
-    console.log("message to show on login: "+login_message);
+
     if(typeof this.defaultSigninHtml === 'undefined'){
       fs.readFile(this.signinHtmlPath, 'utf8' , (err, html) => {
         //err never will be null because if theme is unknown, a default is set
@@ -92,7 +98,7 @@ function DefaultLoginProvider(options){
 
   };
 
-  var performSigninRoute = (req, res, next) => {
+  var performSigninRoute = async (req, res, next) => {
 
     if (typeof req.body.username === 'undefined' || typeof req.body.password === 'undefined') {
       console.log("User or password incorrect: "+req.body.username);
@@ -109,11 +115,15 @@ function DefaultLoginProvider(options){
     }else {
       //user, password and roles are validated!!
       req.session['auth_user'] = storedUser;
+      if(typeof this.options.onAuthenticatedUser !=='undefined'){
+        await this.options.onAuthenticatedUser(storedUser, req, res, next);
+      }
       res.redirect("/");
+
     }
   };
 
-  var performLogoutRoute = (req, res, next) => {
+  var performLogoutRoute = (req, res, next) => {    
     req.session.destroy((err)=>{
       return res.redirect(this.options.signinRoute);
     });

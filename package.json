@@ -1,11 +1,11 @@
 {
   "name": "nodeboot-web-security-starter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple npm package to add a simple login feature to any express web application (not api or microservice)",
   "main": "index.js",
   "scripts": {
     "test": "jest --verbose --silent=true --collectCoverage --detectOpenHandles",
-    "testVerbose": "jest --verbose --silent=false --collectCoverage --detectOpenHandles"
+    "test_verbose": "jest --verbose --silent=false --collectCoverage --detectOpenHandles"
   },
   "repository": {
     "type": "git",

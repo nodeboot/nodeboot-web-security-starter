@@ -29,6 +29,24 @@ describe('DefaultLoginProvider.js', () => {
         expect(response.text.includes("Enter Username")).toBe(true);
 
     })
+
+    it('user not authenticated: should only access to registered publics route like /public', async () => {
+        const app = express();
+        var defaultLoginProvider = new DefaultLoginProvider({
+          express: app,
+          publicRoutes: ["/public"]
+        });
+        defaultLoginProvider.configure();
+        server = http.createServer(app);
+        app.get('/public', (req, res) => {
+          res.status(200).send('im the public')
+        });
+        server.listen(0);
+        const response = await request(app).get('/public');
+        expect(response.status).toBe(200);
+        expect(response.text.includes("im the public")).toBe(true);
+
+    })
     it('user not authenticated, good session: should not access to any resource != /login', async () => {
         const app = express();
         var defaultLoginProvider = new DefaultLoginProvider({
@@ -41,6 +59,7 @@ describe('DefaultLoginProvider.js', () => {
         });
         server.listen(0);
         const response = await request(app).get('/protected');
+        console.log(response.text);
         expect(response.status).toBe(401);
         expect(response.text.startsWith("You are not allowed to access this page")).toBe(true);
 
