@@ -96,11 +96,15 @@ function MicrosoftLoginProvider(options) {
 
   var ensureAuthenticationMiddleware = () => {
     return (req, res, next) => {
-
       if (req.url.startsWith(this.options.signinRoute) || req.url.startsWith(this.options.callbackRoute) ||
         req.url.startsWith(this.options.logoutRoute)) {
         return next();
       }
+      
+      //save the original url : first request
+      if(typeof req.session['original_url'] === 'undefined' || req.session['original_url']==null){
+        req.session['original_url'] = req.url  
+      }      
       if (typeof req.session['auth_user'] === 'undefined') {
         res.type("text/html")
         res.status(401);
@@ -135,7 +139,12 @@ function MicrosoftLoginProvider(options) {
     } else {
       //user exist on microsoft and on memory store !!
       req.session['auth_user'] = existUser;
-      res.redirect("/");
+      var originalUrl = req.session['original_url'];
+      if(typeof originalUrl === 'undefined' || originalUrl==null) {
+        return res.redirect("/");
+      }else{
+        return res.redirect(originalUrl);
+      }
     }
   };
 
